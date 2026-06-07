@@ -11,25 +11,27 @@ def main():
         "Prescriber: Dr. Sarah Smith",
         "Clinic: Example Medical Clinic",
         "Phone: 416-555-1234",
-        "Medication: Amoxicillin",
+        "Medication: Amoxicillin 500 mg",
+        "Directions: Take 1 capsule by mouth twice daily",
         "Quantity:20",
+        "Refills:0",
     ]
 
     result = parse_ocr_lines(
         ocr_lines=sample_ocr_lines,
-        average_confidence=0.91,
+        average_confidence=0.62,
     )
 
     print(json.dumps(result, indent=2))
 
-    missing_fields = result["pharmacyReview"]["missingFields"]
+    low_confidence_fields = result["pharmacyReview"]["lowConfidenceFields"]
+    warnings = result["pharmacyReview"]["warnings"]
 
     assert result["pharmacyReview"]["needsHumanReview"] is True
-    assert "medication.strength" in missing_fields
-    assert "medication.directions" in missing_fields
-    assert "medication.refills" in missing_fields
+    assert "ocr.averageConfidence" in low_confidence_fields
+    assert any("OCR confidence is low" in warning for warning in warnings)
 
-    print("\nPASS: Missing-field safety test passed.")
+    print("\nPASS: Low-confidence safety test passed.")
 
 
 if __name__ == "__main__":

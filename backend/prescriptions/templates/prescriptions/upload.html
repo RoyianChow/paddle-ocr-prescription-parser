@@ -1,0 +1,87 @@
+﻿{% load static %}
+<!DOCTYPE html>
+<html>
+<head>
+    <title>AgentRx Prescription OCR Review</title>
+    <link rel="stylesheet" href="{% static 'prescriptions/styles.css' %}">
+</head>
+<body>
+    <div class="app-shell">
+        <header class="topbar">
+            <div class="brand">
+                <div class="brand-title">AgentRx OCR</div>
+                <div class="brand-subtitle">Prescription extraction for pharmacist/admin review</div>
+            </div>
+            <div class="status-pill">Human Review Required</div>
+        </header>
+
+        <main class="container">
+            <section class="hero">
+                <div class="card hero-card">
+                    <h1>Upload a prescription image for OCR review.</h1>
+                    <p>
+                        AgentRx reads a prescription image, extracts raw OCR text, parses key prescription fields,
+                        and returns structured JSON for human review.
+                    </p>
+
+                    <div class="warning-box">
+                        <strong>Safety notice:</strong>
+                        This MVP does not approve, dispense, or finalize prescriptions.
+                        OCR output may be incomplete or incorrect. A pharmacist/admin must review every result.
+                    </div>
+                </div>
+
+                <div class="card upload-card">
+                    <h2>Prescription Upload</h2>
+
+                    {% if error %}
+                        <div class="error-box">{{ error }}</div>
+                    {% endif %}
+
+                    <form method="post" enctype="multipart/form-data">
+                        {% csrf_token %}
+
+                        <div class="upload-box">
+                            <strong>Select image file</strong>
+                            <p class="step-text">Accepted formats: JPG, PNG, WEBP</p>
+                            <input type="file" name="file" accept="image/jpeg,image/png,image/webp" required>
+                        </div>
+
+                        <button class="btn" type="submit">Run OCR Review</button>
+                    </form>
+                </div>
+            </section>
+
+            <section class="steps">
+                <div class="step">
+                    <div class="step-number">1</div>
+                    <div class="step-title">Upload</div>
+                    <div class="step-text">A prescription image is uploaded into the review portal.</div>
+                </div>
+
+                <div class="step">
+                    <div class="step-number">2</div>
+                    <div class="step-title">OCR</div>
+                    <div class="step-text">PaddleOCR extracts raw text and confidence scores.</div>
+                </div>
+
+                <div class="step">
+                    <div class="step-number">3</div>
+                    <div class="step-title">Parse</div>
+                    <div class="step-text">The backend maps OCR text into prescription JSON fields.</div>
+                </div>
+
+                <div class="step">
+                    <div class="step-number">4</div>
+                    <div class="step-title">Review</div>
+                    <div class="step-text">Missing or unclear fields are flagged for human review.</div>
+                </div>
+            </section>
+
+            <p class="footer-note">
+                AgentRx OCR MVP — extraction only, not a dispensing or approval system.
+            </p>
+        </main>
+    </div>
+</body>
+</html>

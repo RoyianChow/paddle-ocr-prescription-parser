@@ -1,0 +1,172 @@
+﻿{% load static %}
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Prescription OCR Result - AgentRx</title>
+    <link rel="stylesheet" href="{% static 'prescriptions/styles.css' %}">
+</head>
+<body>
+    <div class="app-shell">
+        <header class="topbar">
+            <div class="brand">
+                <div class="brand-title">AgentRx OCR</div>
+                <div class="brand-subtitle">Prescription extraction result</div>
+            </div>
+            <div class="status-pill">NOT APPROVED</div>
+        </header>
+
+        <main class="container">
+            <div class="result-header">
+                <div>
+                    <h1>OCR Review Result</h1>
+                    <p>
+                        Review extracted fields, confidence warnings, missing data, and raw OCR text before any pharmacy action.
+                    </p>
+                </div>
+
+                <a class="secondary-link" href="/">Upload another image</a>
+            </div>
+
+            <section class="review-panel">
+                <div class="alert alert-danger">
+                    <h2>Safety Status</h2>
+                    <p><strong>Human review required:</strong> {{ result.pharmacyReview.needsHumanReview }}</p>
+                    <p><strong>Prescription status:</strong> NOT APPROVED</p>
+                    <p>
+                        This result is OCR extraction only. It is not authorization to approve, dispense,
+                        or finalize a prescription.
+                    </p>
+                </div>
+
+                <div class="alert alert-warning">
+                    <h2>OCR Summary</h2>
+                    <p><strong>Engine:</strong> {{ result.ocr.engine }}</p>
+                    <p><strong>Average confidence:</strong> {{ result.ocr.averageConfidence }}</p>
+                </div>
+            </section>
+
+            <section class="grid">
+                <div class="card section-card">
+                    <h2>Patient</h2>
+
+                    <div class="field">
+                        <span class="field-label">Name</span>
+                        <span class="field-value">{% if result.patient.name %}{{ result.patient.name }}{% else %}<span class="empty">Missing</span>{% endif %}</span>
+                    </div>
+
+                    <div class="field">
+                        <span class="field-label">Date of Birth</span>
+                        <span class="field-value">{% if result.patient.dateOfBirth %}{{ result.patient.dateOfBirth }}{% else %}<span class="empty">Missing</span>{% endif %}</span>
+                    </div>
+
+                    <div class="field">
+                        <span class="field-label">Phone</span>
+                        <span class="field-value">{% if result.patient.phone %}{{ result.patient.phone }}{% else %}<span class="empty">Missing</span>{% endif %}</span>
+                    </div>
+
+                    <div class="field">
+                        <span class="field-label">Address</span>
+                        <span class="field-value">{% if result.patient.address %}{{ result.patient.address }}{% else %}<span class="empty">Missing</span>{% endif %}</span>
+                    </div>
+                </div>
+
+                <div class="card section-card">
+                    <h2>Prescriber</h2>
+
+                    <div class="field">
+                        <span class="field-label">Name</span>
+                        <span class="field-value">{% if result.prescriber.name %}{{ result.prescriber.name }}{% else %}<span class="empty">Missing</span>{% endif %}</span>
+                    </div>
+
+                    <div class="field">
+                        <span class="field-label">Clinic</span>
+                        <span class="field-value">{% if result.prescriber.clinic %}{{ result.prescriber.clinic }}{% else %}<span class="empty">Missing</span>{% endif %}</span>
+                    </div>
+
+                    <div class="field">
+                        <span class="field-label">Phone</span>
+                        <span class="field-value">{% if result.prescriber.phone %}{{ result.prescriber.phone }}{% else %}<span class="empty">Missing</span>{% endif %}</span>
+                    </div>
+
+                    <div class="field">
+                        <span class="field-label">License</span>
+                        <span class="field-value">{% if result.prescriber.licenseNumber %}{{ result.prescriber.licenseNumber }}{% else %}<span class="empty">Missing</span>{% endif %}</span>
+                    </div>
+                </div>
+
+                <div class="card section-card">
+                    <h2>Medication</h2>
+
+                    <div class="field">
+                        <span class="field-label">Name</span>
+                        <span class="field-value">{% if result.medication.name %}{{ result.medication.name }}{% else %}<span class="empty">Missing</span>{% endif %}</span>
+                    </div>
+
+                    <div class="field">
+                        <span class="field-label">Strength</span>
+                        <span class="field-value">{% if result.medication.strength %}{{ result.medication.strength }}{% else %}<span class="empty">Missing</span>{% endif %}</span>
+                    </div>
+
+                    <div class="field">
+                        <span class="field-label">Directions</span>
+                        <span class="field-value">{% if result.medication.directions %}{{ result.medication.directions }}{% else %}<span class="empty">Missing</span>{% endif %}</span>
+                    </div>
+
+                    <div class="field">
+                        <span class="field-label">Quantity</span>
+                        <span class="field-value">{% if result.medication.quantity %}{{ result.medication.quantity }}{% else %}<span class="empty">Missing</span>{% endif %}</span>
+                    </div>
+
+                    <div class="field">
+                        <span class="field-label">Refills</span>
+                        <span class="field-value">{% if result.medication.refills %}{{ result.medication.refills }}{% else %}<span class="empty">Missing</span>{% endif %}</span>
+                    </div>
+                </div>
+            </section>
+
+            <section class="review-panel">
+                <div class="alert alert-danger">
+                    <h2>Missing Fields</h2>
+
+                    {% if result.pharmacyReview.missingFields %}
+                        <ul>
+                            {% for field in result.pharmacyReview.missingFields %}
+                                <li>{{ field }}</li>
+                            {% endfor %}
+                        </ul>
+                    {% else %}
+                        <p>No required fields were marked missing by the current parser.</p>
+                    {% endif %}
+                </div>
+
+                <div class="alert alert-warning">
+                    <h2>Warnings</h2>
+
+                    {% if result.pharmacyReview.warnings %}
+                        <ul>
+                            {% for warning in result.pharmacyReview.warnings %}
+                                <li>{{ warning }}</li>
+                            {% endfor %}
+                        </ul>
+                    {% else %}
+                        <p>No warnings returned.</p>
+                    {% endif %}
+                </div>
+            </section>
+
+            <section class="card json-card">
+                <h2>Raw Structured JSON</h2>
+                <pre>{{ result_json }}</pre>
+            </section>
+
+            <div class="actions">
+                <a class="secondary-link" href="/">Upload another image</a>
+            </div>
+
+            <p class="footer-note">
+                AgentRx OCR MVP — every OCR result must be reviewed by a pharmacist/admin.
+            </p>
+        </main>
+    </div>
+</body>
+</html>

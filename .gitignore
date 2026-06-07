@@ -1,0 +1,48 @@
+﻿# Python
+__pycache__/
+*.py[cod]
+*$py.class
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+
+# Virtual environments
+venv/
+backend/venv/
+.venv/
+env/
+
+# Environment / secrets
+.env
+.env.*
+!.env.example
+
+# FastAPI / local uploads
+backend/temp_uploads/
+temp_uploads/
+
+# Prescription images / sensitive files
+backend/samples/*
+!backend/samples/.gitkeep
+*.jpg
+*.jpeg
+*.png
+*.webp
+*.heic
+*.pdf
+
+# PaddleOCR / model cache
+.paddlex/
+PaddleOCR/
+inference/
+output/
+
+# OS / editor
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+
+# Logs
+*.log
+logs/
